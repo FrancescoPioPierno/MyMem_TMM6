@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">MyMem</string>
+    <string name="mem">Miei ricordi</string>
+    <string name="search">Cerca</string>
+    <string name="notes_title">Titolo</string>
+    <string name="notes_sub_title">Sottotitolo</string>
+    <string name="notes_desc">Inserisci descrizione</string>
+    <string name="web_url">Inserisci web URL</string>
+    <string name="cancel">Cancella</string>
+    <string name="ok">Ok</string>
+    <string name="storage_permission_text">Questa app ha bisogno di un tuo storage</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
