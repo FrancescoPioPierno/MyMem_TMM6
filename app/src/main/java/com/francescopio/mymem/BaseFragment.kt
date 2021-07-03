@@ -7,6 +7,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
+/*
+Si inserisce all'interno della BaseFragment che fa da base a tutti i nostri Fragment, la CoroutineScope(li estende anche).
+Le Coroutine aiutano a gestire attività di lunga durata che potrebbero bloccare il Thread principale ed
+impedire la risposta dell'app. CoroutineScope ha il compito di generare nuovi "scopi" per nuove coroutine.
+ */
 
 abstract class BaseFragment:Fragment(),CoroutineScope{
 

@@ -16,6 +16,14 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
+/*
+All'interno della classe HomeFragment verranno gestiti ed estratte tutte le informazioni riguardanti
+ai nostri oggetti, ed inoltre di andare al crearli. Il tutto viene gestito con il richiamo dell'Adapter
+appartenente alla RecycleView. L'Adapter è  responsabile di estrarre dal data Source (che di conseguenza
+popola i ViewHolder). Inoltre i dati conservati vengono inviati alla RecycleView.
+ */
+
+
 class HomeFragment : BaseFragment() {
 
     var arrNotes = ArrayList<Notes>()
@@ -33,7 +41,7 @@ class HomeFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -70,15 +78,22 @@ class HomeFragment : BaseFragment() {
 
         notesAdapter!!.setOnClickListener(onClicked)
 
-
+        //Implementazione del metodo setOnClickListener per la creazione dell'oggetto.
         fabBtnCreateNote.setOnClickListener {
             replaceFragment(CreateNoteFragment.newInstance(), false)
         }
 
+        //Implementazione del metodo che permette di andare ad effettuare una search degli oggetti al momento.
         search_view. setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
+
+            /*
+            /All'interno di questa funzione, i risultati della query (la ricerca avviene tramite titolo)
+            verranno salvati all'interno di un array "temporaneo". Se la query di ricerca va a buon fine, verranno
+            restituiti tutti gli oggetti che hanno come titolo la stringa ricercata.
+             */
 
             override fun onQueryTextChange(p0: String?): Boolean {
 

@@ -15,6 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_note_bottom.*
 
 class NoteBottomSheetFragment : BottomSheetDialogFragment() {
+    //Codice selezione del colore
     var selectedColor = "#171C26"
 
 
@@ -93,6 +94,7 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
 
     }
 
+    //Override della funzione oViewCreated. Se la nota esiste, apparirà l'opzione dei eliminazione, in caso contrario non appare.
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (noteId != -1){
@@ -112,7 +114,11 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
       al fragment
        */
 
-
+        /*
+        Le funzioni a seguire andranno a gestire le operazioni che verranno eseguite al momento
+        del click del bottone. La variabile intent verrà usata (accompagnata dal metodo putExtra()) per dichiarare l'intento
+        di quale operazione dovrà essere eseguita. Può essere utilizzata con una startActivity per lanciare un'Activity per poi essere ricevuta dal BroadcastReceiver interessato.
+         */
         fNote1.setOnClickListener {
 
             imgNote1.setImageResource(R.drawable.ic_tick)

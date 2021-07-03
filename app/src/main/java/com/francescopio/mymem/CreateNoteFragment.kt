@@ -34,20 +34,30 @@ import kotlinx.android.synthetic.main.item_rv_notes.view.*
 import pub.devrel.easypermissions.AppSettingsDialog
 
 
+/*
+La classe CreateNoteFragment permette di andare a creare il nostro oggetto, la nostra nota.
+Come si vuol notare, la classe estende la classe BaseFragment e EasyPermissions.
+EasyPermission consente all'applicazione di chiedere il permesso all'utente di accedere al proprio storage,
+in questo caso alla nostra galleria di foto.
+ */
+
+
 class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, EasyPermissions.RationaleCallbacks {
 
     var selectedColor = "#171C26"
 
+    //Si inizializza la data.
     var currentDate:String? = null
     private var READ_STORAGE_PERM = 123
 
-    //Codice richiesta per l'immagine
+    //Codice richiesta per l'immagine, per l'immagine selezionata, per il link e l'id dell'oggetto.
 
     private var REQUEST_CODE_IMAGE = 456
     private var selectedImagePath = ""
     private var webLink = ""
     private var noteId = -1
 
+    //Funzione che permette di creare il primo oggetto. In caso contrario l'applicazione va in crash.
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -56,6 +66,7 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
 
     }
 
+    //Funzione onCreateView che visualizza il layout per la creazione della nota.
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -75,7 +86,11 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
             }
     }
 
-
+    /*
+    In questa funzione onViewCreated, si estraggono tutte le informazioni relativi all'oggetto.
+    Inoltre si decide quali informazioni andare a mostrare e cosa no soddisfacendo le condizioni
+    all'interno del blocco if-else.
+     */
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -94,6 +109,7 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
                     etNoteSubTit.setText(notes.subTitle)
                     etNoteDesc.setText(notes.noteText)
 
+                    //Se l'immagine non è vuota, essa verrà mostrata
                     if (notes.imgPath != ""){
 
                         selectedImagePath = notes.imgPath!!
@@ -101,6 +117,8 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
                         layoutImage.visibility = View.VISIBLE
                         imgNote.visibility = View.VISIBLE
                         imgDelete.visibility = View.VISIBLE
+
+
                     }else{
                         layoutImage.visibility = View.GONE
                         imgNote.visibility = View.GONE
@@ -128,13 +146,19 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
             BroadcastReceiver, IntentFilter("bottom_sheet_action")
         )
-
+        //Si inserisce il formato della data della creazione dell'oggetto.
         val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
         currentDate = sdf.format(Date())
 
         colorView.setBackgroundColor(Color.parseColor(selectedColor))
 
         tvDateTime.text = currentDate
+
+        /*
+        setOnClickListener è un metodo che consente di decidere che azione deve essere eseguita
+        nel momento in cui si va a cliccare quel bottone. Se l'oggetto è stato creato, si può andare ad
+        effettuare le modifiche, se no l'oggetto verrà salvato (eseguibile nell'else)
+         */
 
         imgDone.setOnClickListener {
 
@@ -151,12 +175,15 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
             requireActivity().supportFragmentManager.popBackStack()
         }
 
+        //Mostra il layout relativo alla scelta del colore, inserimento immagine e web URL nel momento del click.
+
         imgMore.setOnClickListener{
 
             var noteBottomSheetFragment = NoteBottomSheetFragment.newInstance(noteId)
             noteBottomSheetFragment.show(requireActivity().supportFragmentManager, "Note bottom sheet fragment")
 
         }
+        //Consente di andare a rimuovere l'immagine.
 
         imgDelete.setOnClickListener{
 
@@ -164,6 +191,11 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
                 layoutImage.visibility = View.GONE
 
             }
+
+        /*
+        btnOk.setOnClickListener permette di andare a confermare la creazione del link. Se il link
+        non è valido, apparirà un messaggio di avviso.
+         */
 
 
         btnOk.setOnClickListener {
@@ -173,6 +205,8 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
                 Toast.makeText(requireContext(), "Url è richiesto", Toast.LENGTH_SHORT).show()
             }
         }
+
+        //Consente di annullare l'inserimento della web URL.
 
         btnCancel.setOnClickListener{
             if (noteId != -1){
@@ -187,6 +221,8 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
 
         }
 
+        //Bottone che rimuove completamente la web URL
+
         imgUrlDelete.setOnClickListener{
             webLink = ""
             tvWebLink.visibility = View.GONE
@@ -194,21 +230,26 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
             layoutWebUrl.visibility = View.GONE
         }
 
+        //Bottone che consente di andare ad inserire la web URL
+
 
         tvWebLink.setOnClickListener{
 
             var intent = Intent(Intent.ACTION_VIEW, Uri.parse(etWebLink.text.toString()))
+            //Avvio dell'Activity con l'intent.
             startActivity(intent)
 
         }
 
     }
+    //Implementazione della funzione updateNote() che consente di modificare l'oggetto in questione.
 
     private fun updateNote(){
 
         launch{
-
+            //Si estraggono le informazioni dalla coroutine.
             context?.let {
+
                 var notes = NotesDatabase.getDatabase(it).noteDao().getSpecificNote(noteId)
                 notes.title = etNoteTitle.text.toString()
                 notes.subTitle = etNoteSubTit.text.toString()
@@ -233,9 +274,9 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
 
 
     }
-
+    //Implementazione della funzione saveNote() che crea il nostro oggetto.
     private fun saveNote(){
-        //Aggiunta dei controlli per i vari campi
+        //Aggiunta dei controlli per i vari campi: titolo, sottotitolo e descrizione.
         if (etNoteTitle.text.isNullOrEmpty()){
             Toast.makeText(context, "Titolo richiesto", Toast.LENGTH_SHORT).show()
         }
@@ -252,6 +293,7 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
 
 
         launch{
+            //Si vanno ad inserire i dati all'interno del database tramite la Coroutine.
             var notes = Notes()
             notes.title = etNoteTitle.text.toString()
             notes.subTitle = etNoteSubTit.text.toString()
@@ -277,11 +319,14 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
         }
 
     }
-
+    /*
+    Implementazione della funzione deleteNote() che elimina completamente il nostro oggetto.
+     */
     private fun deleteNote(){
 
         launch{
             context?.let{
+                //Si elimina il nostro oggetto e verrà rimosso dalla tabella attraverso il metodo popBackStack()
 
                 NotesDatabase.getDatabase(it).noteDao().deleteSpecificNote(noteId)
                 requireActivity().supportFragmentManager.popBackStack()
@@ -289,6 +334,8 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
         }
 
     }
+
+    //Funzione checkWebUrl() che esegue un check al link inserito se sia corretto o meno.
 
     private fun checkWebUrl(){
         if (Patterns.WEB_URL.matcher(etWebLink.text.toString()).matches()){
@@ -300,6 +347,7 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
             tvWebLink.text = etWebLink.text.toString()
 
         }else{
+            //Messaggio di errore in caso l'URL sia errata.
             Toast.makeText(requireContext(), "Url non è valido", Toast.LENGTH_SHORT).show()
         }
 
@@ -312,6 +360,10 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
 
             var actionColor=p1!!.getStringExtra("action")
 
+            /*
+            Si decide all'interno del costrutto when, che azione bisogna essere eseguita nel momento della scelta
+            dell'operazione. Permette di selezionare i vari colori, di inserire immagini, link ed eliminare l'oggetto scelto.
+             */
             when(actionColor!!){
 
                 "Blue" -> {
@@ -400,26 +452,29 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
 
 
         }
+    //Distruzione del ricevitore.
     override fun onDestroy() {
 
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(BroadcastReceiver)
         super.onDestroy()
     }
 
-    //Creazione di una funzione "storage"
+    //Creazione di una funzione "storage" che permetterà di accedere alla galleria.
     private fun hasReadStoragePerm():Boolean{
 
         return EasyPermissions.hasPermissions(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
 
-
+    //Funzione readStorageTask che permette di "leggere" la nostra galleria e di accedervi.
     private fun readStorageTask(){
         if (hasReadStoragePerm()){
 
             pickImageFromGallery()
 
         }else{
+
+            //Se l'utente decide di non dare il permesso, apparirà un messaggio di warning che bisogna a tutti i costi entrare nella galleria.
 
             EasyPermissions.requestPermissions(
                 requireActivity(),
@@ -430,7 +485,7 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
         }
     }
 
-    //Si crea una funzione che permette di scegliere un'immagine
+    //Si crea una funzione che permette di scegliere un'immagine all'interno della galleria.
 
     private fun pickImageFromGallery(){
         var intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -438,6 +493,8 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
              startActivityForResult(intent,REQUEST_CODE_IMAGE)
          }
     }
+
+    //Funzione getPathFromUri che permette di ottenere il path.
 
     private fun getPathFromUri(contentUri: Uri): String? {
         var filePath:String? = null
@@ -454,7 +511,10 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
         return filePath
     }
 
-
+    /*
+    Si esegue l'override della funzione onActivityResult per recuperare tutti i dati che vengono eseguiti
+    dall'Activity.
+     */
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -483,7 +543,10 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
 
         }
     }
-
+    /*
+    /Gestione dei permessi. Override della funzione onRequestPermissionsResult.
+    Il sistema passa la risposta dell'utente alla finestra di dialogo dei permessi.
+     */
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
