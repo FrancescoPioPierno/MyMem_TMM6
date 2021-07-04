@@ -44,7 +44,11 @@ class HomeFragment : BaseFragment() {
 
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
-
+    /*
+    Si ricorda che sfortunatamente in Kotlin non esistono membri statici o metodi.
+    Se vogliamo richiamare una funzione o un membro senza richiamare l'istanza, bisogna utilizzare
+    la keyword "companion object"
+     */
     companion object {
 
         @JvmStatic
@@ -113,6 +117,7 @@ class HomeFragment : BaseFragment() {
         })
 
     }
+    //Si crea una variabile onClicked che sarà del tipo NotesAdapter.
 
     private val onClicked = object :NotesAdapter.OnItemClickListener{
         override fun onClicked(notesId: Int) {
@@ -130,7 +135,10 @@ class HomeFragment : BaseFragment() {
 
     }
 
-
+    /*
+    /Funzione replaceFragment che sostituisce un fragment esistente in un container
+    con un'istanza di un nuovo fragment che si andrà a fornire.
+     */
 
     fun replaceFragment(fragment:Fragment, istransition:Boolean){
         val fragmentTransition = requireActivity().supportFragmentManager.beginTransaction()

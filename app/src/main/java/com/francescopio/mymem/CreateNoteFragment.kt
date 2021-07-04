@@ -66,7 +66,7 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
 
     }
 
-    //Funzione onCreateView che visualizza il layout per la creazione della nota.
+    // Override della funzione onCreateView che visualizza il layout per la creazione della nota.
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -87,7 +87,7 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
     }
 
     /*
-    In questa funzione onViewCreated, si estraggono tutte le informazioni relativi all'oggetto.
+    (Override) In questa funzione onViewCreated, si estraggono tutte le informazioni relativi all'oggetto.
     Inoltre si decide quali informazioni andare a mostrare e cosa no soddisfacendo le condizioni
     all'interno del blocco if-else.
      */
